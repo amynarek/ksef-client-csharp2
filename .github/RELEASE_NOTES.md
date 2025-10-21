@@ -5,11 +5,9 @@
 ---
 
 ### Nowe
--
  - `QueryInvoiceMetadataAsync` - Dodano parametr `sortOrder`, umożliwiający określenie kierunku sortowania wyników.
 
 ### Zmodyfikowane
--
  - Wyliczanie liczby części paczek na podstawie wielkości paczki oraz ustalonych limitów
  - Dostosowanie nazewnictwa - zmiana z `OperationReferenceNumber` na `ReferenceNumber`
  - Rozszerzone scenariusze testów uprawnień
