@@ -1,6 +1,7 @@
 using KSeF.Client.Core.Interfaces.Clients;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Permissions;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Core.Models.Permissions.IndirectEntity;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Tests.Utils;
@@ -41,8 +42,8 @@ public partial class CredentialsRevokeTests
         public static async Task<bool> GrantCredentialsManageToDelegateAsync(
             IKSeFClient client, string ownerToken, string delegateNip)
         {
-            PersonSubjectIdentifier subjectIdentifier = new PersonSubjectIdentifier { Type = PersonSubjectIdentifierType.Nip, Value = delegateNip };
-            PersonStandardPermissionType[] permissions = new[] { PersonStandardPermissionType.CredentialsManage };
+            GrantPermissionsPersonSubjectIdentifier subjectIdentifier = new GrantPermissionsPersonSubjectIdentifier { Type = GrantPermissionsPersonSubjectIdentifierType.Nip, Value = delegateNip };
+            PersonPermissionType[] permissions = new[] { PersonPermissionType.CredentialsManage };
 
             OperationResponse operationResponse = await PermissionsUtils.GrantPersonPermissionsAsync(client, ownerToken, subjectIdentifier, permissions);
 

@@ -5,6 +5,7 @@ using KSeF.Client.Tests.Utils;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models.Permissions.Person;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 
 namespace KSeF.Client.Tests.Core.E2E.Permissions.EntityPermissions;
 
@@ -23,7 +24,7 @@ public partial class EntityPermissionE2ETests : TestBase
 
     // Zamiast fixture: prywatne readonly pola
     private string accessToken = string.Empty;
-    private EntitySubjectIdentifier Entity { get; } = new();
+    private GrantPermissionsEntitySubjectIdentifier Entity { get; } = new();
 
     public EntityPermissionE2ETests()
     {
@@ -33,7 +34,7 @@ public partial class EntityPermissionE2ETests : TestBase
 
         accessToken = authOperationStatusResponse.AccessToken.Token;
         Entity.Value = MiscellaneousUtils.GetRandomNip();
-        Entity.Type = EntitySubjectIdentifierType.Nip;
+        Entity.Type = GrantPermissionsEntitySubjectIdentifierType.Nip;
     }
 
     [Fact]
@@ -102,7 +103,7 @@ public partial class EntityPermissionE2ETests : TestBase
     /// Nadaje uprawnienia dla podmiotu i zwraca numer referencyjny operacji.
     /// </summary>
     private async Task<OperationResponse> GrantEntityPermissionsAsync(
-        EntitySubjectIdentifier subject,
+        GrantPermissionsEntitySubjectIdentifier subject,
         string description,
         string accessToken)
     {

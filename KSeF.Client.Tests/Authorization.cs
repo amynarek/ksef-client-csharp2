@@ -46,7 +46,7 @@ public class Authorization : KsefIntegrationTestBase
         AuthenticationKsefToken ksefTokenStatus = await KsefClient.GetKsefTokenAsync(ownerToken.ReferenceNumber, authInfo.AccessToken.Token);
 
         await Task.Delay(SleepTime);
-        IAuthCoordinator authCoordinator = new AuthCoordinator(KsefClient) as IAuthCoordinator;
+        IAuthCoordinator authCoordinator = new AuthCoordinator(KsefClient);
         await Task.Delay(SleepTime);
 
         AuthenticationTokenContextIdentifierType contextType = AuthenticationTokenContextIdentifierType.Nip;
@@ -78,7 +78,7 @@ public class Authorization : KsefIntegrationTestBase
     public async Task KsefClientAuthorization_AuthCoordinatorService_Positive(EncryptionMethodEnum encryptionMethod)
     {
         // Arrange
-        IAuthCoordinator authCoordinatorService = new AuthCoordinator(KsefClient) as IAuthCoordinator;
+        IAuthCoordinator authCoordinatorService = new AuthCoordinator(KsefClient);
         string testNip = MiscellaneousUtils.GetRandomNip();
         AuthenticationTokenContextIdentifierType contextIdentifierType = AuthenticationTokenContextIdentifierType.Nip;
         AuthenticationOperationStatusResponse authInfo = await AuthenticationUtils.AuthenticateAsync(KsefClient, SignatureService, testNip, contextIdentifierType);

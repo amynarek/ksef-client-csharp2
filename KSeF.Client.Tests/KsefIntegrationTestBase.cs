@@ -1,3 +1,5 @@
+using KSeF.Client.Api.Services;
+using KSeF.Client.Clients;
 using KSeF.Client.Core.Interfaces.Clients;
 using KSeF.Client.Core.Interfaces.Services;
 using KSeF.Client.DI;
@@ -40,10 +42,20 @@ public abstract class KsefIntegrationTestBase : IDisposable
             options.CustomHeaders = apiSettings.CustomHeaders ?? new Dictionary<string, string>();
         });
 
-        services.AddCryptographyClient(options =>
+        // UWAGA! w testach nie używamy AddCryptographyClient tylko rejestrujemy ręcznie, bo on uruchamia HostedService w tle
+        services.AddSingleton<ICryptographyClient, CryptographyClient>();
+        services.AddSingleton<ICryptographyService, CryptographyService>(serviceProvider =>
         {
-            options.WarmupOnStart = WarmupMode.NonBlocking;
+            // Definicja domyślnego delegata
+            return new CryptographyService(async cancellationToken =>
+            {
+                using IServiceScope scope = serviceProvider.CreateScope();
+                ICryptographyClient cryptographyClient = scope.ServiceProvider.GetRequiredService<ICryptographyClient>();
+                return await cryptographyClient.GetPublicCertificatesAsync(cancellationToken);
+            });
         });
+        // Rejestracja usługi hostowanej (Hosted Service) jako singleton na potrzeby testów
+        services.AddSingleton<CryptographyWarmupHostedService>();
 
         _serviceProvider = services.BuildServiceProvider(new ServiceProviderOptions
         {
@@ -54,8 +66,9 @@ public abstract class KsefIntegrationTestBase : IDisposable
         _scope = _serviceProvider.CreateScope();
 
         // opcjonalne: inicjalizacja lub inne czynności startowe
-        _scope.ServiceProvider.GetRequiredService<ICryptographyService>()
-                           .WarmupAsync(CancellationToken.None).GetAwaiter().GetResult();
+        // Uruchomienie usługi hostowanej w trybie blokującym (domyślnym) na potrzeby testów
+        _scope.ServiceProvider.GetRequiredService<CryptographyWarmupHostedService>()
+                   .StartAsync(CancellationToken.None).GetAwaiter().GetResult();
     }
 
     public Task DisposeAsync() => Task.CompletedTask;

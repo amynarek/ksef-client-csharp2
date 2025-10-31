@@ -12,7 +12,7 @@ public class SessionE2ETests : TestBase
     private readonly string refreshToken;
     private readonly string nip;
 
-    private const string ExpectedErrorMessage = "HTTP 400: Bad Request, AdditionalInfo: 21304: Brak uwierzytelnienia. - Nieprawidłowy token.";
+    private const string ExpectedErrorMessage = "21304: Brak uwierzytelnienia. - Nieprawidłowy token.";
     public SessionE2ETests()
     {
         nip = MiscellaneousUtils.GetRandomNip();
@@ -107,11 +107,11 @@ public class SessionE2ETests : TestBase
     public async Task RefreshAccessTokenAsync_WithRefreshToken_ReturnsNewAccessToken()
     {
         // Arrange
-        AuthenticationOperationStatusResponse authenticationResposne = await AuthenticationUtils
+        AuthenticationOperationStatusResponse authenticationResponse = await AuthenticationUtils
             .AuthenticateAsync(KsefClient, SignatureService);
 
-        string initialAccessToken = authenticationResposne.AccessToken.Token;
-        string initialRefreshToken = authenticationResposne.RefreshToken.Token;
+        string initialAccessToken = authenticationResponse.AccessToken.Token;
+        string initialRefreshToken = authenticationResponse.RefreshToken.Token;
 
         // Act
         RefreshTokenResponse refreshResult = await KsefClient.RefreshAccessTokenAsync(initialRefreshToken, CancellationToken.None);

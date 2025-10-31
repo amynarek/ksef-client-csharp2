@@ -10,6 +10,7 @@ using System.Text.Json;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Interfaces.Clients;
 using KSeF.Client.Core.Models.Permissions.Person;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 
 namespace KSeF.Client.Tests.Features;
 
@@ -33,23 +34,23 @@ public class AuthenticateTests : KsefIntegrationTestBase
 
     [Theory]
     // ===== pesel =====
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.InvoiceWrite })]
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.InvoiceRead })]
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.CredentialsManage })]
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.CredentialsRead })]
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.Introspection })]
-    [InlineData("pesel", new PersonStandardPermissionType[] { PersonStandardPermissionType.SubunitManage })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.InvoiceWrite })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.InvoiceRead })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.CredentialsManage })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.CredentialsRead })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.Introspection })]
+    [InlineData("pesel", new PersonPermissionType[] { PersonPermissionType.SubunitManage })]
     // ===== nip =====
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.InvoiceWrite })]
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.InvoiceRead })]
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.CredentialsManage })]
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.CredentialsRead })]
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.Introspection })]
-    [InlineData("nip", new PersonStandardPermissionType[] { PersonStandardPermissionType.SubunitManage })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.InvoiceWrite })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.InvoiceRead })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.CredentialsManage })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.CredentialsRead })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.Introspection })]
+    [InlineData("nip", new PersonPermissionType[] { PersonPermissionType.SubunitManage })]
     [Trait("Scenario", "Uwierzytelnienie certyfikatem (PESEL/NIP) na różne uprawnienia")]
     public async Task GivenOwnerContextAndPermissionGranted_WhenAuthenticatingAsSubject_ThenAccessTokenReturned(
         string identifierKind,
-        PersonStandardPermissionType[] permissions,
+        PersonPermissionType[] permissions,
         AuthenticationTokenContextIdentifierType contextIdentifierType = AuthenticationTokenContextIdentifierType.Nip)
     {
         string ownerNip = MiscellaneousUtils.GetRandomNip();
@@ -58,14 +59,14 @@ public class AuthenticateTests : KsefIntegrationTestBase
         string delegateNip = MiscellaneousUtils.GetRandomNip();
         string pesel = MiscellaneousUtils.GetRandomPesel();
 
-        PersonSubjectIdentifier subjectIdentifier;
+        GrantPermissionsPersonSubjectIdentifier subjectIdentifier;
         if (identifierKind.Equals("pesel", StringComparison.OrdinalIgnoreCase))
         {
-            subjectIdentifier = new PersonSubjectIdentifier { Type = PersonSubjectIdentifierType.Pesel, Value = pesel };
+            subjectIdentifier = new GrantPermissionsPersonSubjectIdentifier { Type = GrantPermissionsPersonSubjectIdentifierType.Pesel, Value = pesel };
         }
         else
         {
-            subjectIdentifier = new PersonSubjectIdentifier { Type = PersonSubjectIdentifierType.Nip, Value = delegateNip };
+            subjectIdentifier = new GrantPermissionsPersonSubjectIdentifier { Type = GrantPermissionsPersonSubjectIdentifierType.Nip, Value = delegateNip };
         }
         await PermissionsUtils.GrantPersonPermissionsAsync(KsefClient, ownerToken, subjectIdentifier, permissions);
 
@@ -111,7 +112,7 @@ public class AuthenticateTests : KsefIntegrationTestBase
 
         AuthenticationOperationStatusResponse accessToken = await KsefClient.GetAccessTokenAsync(authOperationInfo.AuthenticationToken.Token);
         Assert.NotNull(accessToken);
-        HashSet<PersonStandardPermissionType> actual = GetPerAsEnumSet<PersonStandardPermissionType>(accessToken.AccessToken.Token);
+        HashSet<PersonPermissionType> actual = GetPerAsEnumSet<PersonPermissionType>(accessToken.AccessToken.Token);
         Assert.True(permissions.ToHashSet().IsSubsetOf(actual));
     }
 
@@ -129,8 +130,8 @@ public class AuthenticateTests : KsefIntegrationTestBase
 
         string delegateNip = MiscellaneousUtils.GetRandomNip();
 
-        EntitySubjectIdentifier subject = new EntitySubjectIdentifier
-        { Type = EntitySubjectIdentifierType.Nip, Value = delegateNip };
+        GrantPermissionsEntitySubjectIdentifier subject = new GrantPermissionsEntitySubjectIdentifier
+        { Type = GrantPermissionsEntitySubjectIdentifierType.Nip, Value = delegateNip };
 
         GrantPermissionsEntityRequest request = GrantEntityPermissionsRequestBuilder
             .Create()

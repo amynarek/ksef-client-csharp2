@@ -60,6 +60,18 @@ Biblioteka zawierająca wspólne typy i interfejsy:
 
 Aby użyć biblioteki KSeF.Client w swoim projekcie, dodaj referencję do projektu **KSeF.Client** (zawiera on już referencję do KSeF.Client.Core).
 
+### Pakiety Nuget 
+
+Projekty KSeF.Client i KSeF.Client.Core są dostępne jako pakiety nuget w GitHub Packages organizacji CIRFMF.
+
+Opis paczek:
+* KSeF.Client - główna biblioteka klienta z logiką biznesową
+* KSeF.Client.Core - modele, interfejsy i wyjątki 
+
+Należy najpierw skonfigurować dostęp do paczek NuGet opublikowanych w GitHub Packages organizacji CIRFMF.
+Wymaga to autoryzacji przy pomocy osobistego tokena dostępu (Personal Access Token – PAT) z uprawnieniem read:packages.
+Dokładny poradnik jest dostępny w pliku [*nuget-packege.md*](https://github.com/CIRFMF/ksef-client-csharp/blob/main/nuget-packege.md).
+
 ### Przykładowa rejestracja klienta KSeF w kontenerze DI
 
 #### Minimalna konfiguracja
@@ -72,7 +84,7 @@ WebApplicationBuilder builder = Microsoft.AspNetCore.Builder.WebApplication.Crea
 // Rejestracja klienta KSeF
 builder.Services.AddKSeFClient(options =>
 {
-    options.BaseUrl = KsefEnviromentsUris.TEST; // lub PRODUCTION, DEMO
+    options.BaseUrl = KsefEnvironmentsUris.TEST; // lub PRODUCTION, DEMO
 });
 
 // Rejestracja serwisu kryptograficznego (wymagane dla operacji wymagających szyfrowania)
@@ -109,7 +121,7 @@ KSeFClientOptions? apiSettings = builder.Configuration.GetSection("ApiSettings")
 // Rejestracja klienta KSeF z konfiguracją z appsettings
 builder.Services.AddKSeFClient(options =>
 {
-    options.BaseUrl = apiSettings?.BaseUrl ?? KsefEnviromentsUris.TEST;
+    options.BaseUrl = apiSettings?.BaseUrl ?? KsefEnvironmentsUris.TEST;
     options.WebProxy = apiSettings?.WebProxy; // opcjonalnie: konfiguracja proxy
     options.CustomHeaders = apiSettings?.CustomHeaders ?? new Dictionary<string, string>();
 });

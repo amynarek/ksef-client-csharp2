@@ -3,6 +3,7 @@ using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Tests.Utils;
 using KSeF.Client.Core.Models;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 
 namespace KSeF.Client.Tests.Core.E2E.Permissions.PersonPermissions;
 
@@ -12,7 +13,7 @@ public class PersonPermissionE2ETests : TestBase
     private const int OperationSuccessfulStatusCode = 200;
 
     private string accessToken = string.Empty;
-    private PersonSubjectIdentifier Person { get; } = new();
+    private GrantPermissionsPersonSubjectIdentifier Person { get; } = new();
 
     public PersonPermissionE2ETests()
     {
@@ -25,7 +26,7 @@ public class PersonPermissionE2ETests : TestBase
 
         // Ustaw dane osoby testowej (PESEL)
         Person.Value = MiscellaneousUtils.GetRandomPesel();
-        Person.Type = PersonSubjectIdentifierType.Pesel;
+        Person.Type = GrantPermissionsPersonSubjectIdentifierType.Pesel;
     }
 
     /// <summary>
@@ -53,18 +54,18 @@ public class PersonPermissionE2ETests : TestBase
         PagedPermissionsResponse<PersonPermission> searchAfterGrant =
             await AsyncPollingUtils.PollAsync(
                 async () => await SearchGrantedPersonPermissionsAsync(accessToken),
-                result =>
+                (Func<PagedPermissionsResponse<PersonPermission>, bool>)(                result =>
                 {
                     if (result is null || result.Permissions is null) return false;
 
                     List<PersonPermission> byDescription =
                         result.Permissions.Where(p => p.Description == description).ToList();
 
-                    bool hasRead = byDescription.Any(x => Enum.Parse<PersonStandardPermissionType>(x.PermissionScope) == PersonStandardPermissionType.InvoiceRead);
-                    bool hasWrite = byDescription.Any(x => Enum.Parse<PersonStandardPermissionType>(x.PermissionScope) == PersonStandardPermissionType.InvoiceWrite);
+                    bool hasRead = byDescription.Any((Func<PersonPermission, bool>)(x => Enum.Parse<Client.Core.Models.Permissions.Person.PersonPermissionType>(x.PermissionScope) == Client.Core.Models.Permissions.Person.PersonPermissionType.InvoiceRead));
+                    bool hasWrite = byDescription.Any((Func<PersonPermission, bool>)(x => Enum.Parse<Client.Core.Models.Permissions.Person.PersonPermissionType>(x.PermissionScope) == Client.Core.Models.Permissions.Person.PersonPermissionType.InvoiceWrite));
 
                     return byDescription.Count > 0 && hasRead && hasWrite;
-                },
+                }),
                 delay: TimeSpan.FromMilliseconds(SleepTime),
                 maxAttempts: 60,
                 cancellationToken: CancellationToken);
@@ -79,8 +80,8 @@ public class PersonPermissionE2ETests : TestBase
                 .ToList();
 
         Assert.NotEmpty(grantedNow);
-        Assert.Contains(grantedNow, x => Enum.Parse<PersonStandardPermissionType>(x.PermissionScope) == PersonStandardPermissionType.InvoiceRead);
-        Assert.Contains(grantedNow, x => Enum.Parse<PersonStandardPermissionType>(x.PermissionScope) == PersonStandardPermissionType.InvoiceWrite);
+        Assert.Contains(grantedNow, x => Enum.Parse<PersonPermissionType>(x.PermissionScope) == PersonPermissionType.InvoiceRead);
+        Assert.Contains(grantedNow, x => Enum.Parse<PersonPermissionType>(x.PermissionScope) == PersonPermissionType.InvoiceWrite);
 
         // Act: cofnij nadane uprawnienia
         List<PermissionsOperationStatusResponse> revokeResult = await RevokePermissionsAsync(searchAfterGrant.Permissions, accessToken);
@@ -126,7 +127,7 @@ public class PersonPermissionE2ETests : TestBase
     /// Nadaje uprawnienia dla osoby i zwraca odpowiedź operacji.
     /// </summary>
     private async Task<OperationResponse> GrantPersonPermissionsAsync(
-        PersonSubjectIdentifier subject,
+        GrantPermissionsPersonSubjectIdentifier subject,
         string description,
         string accessToken)
     {
@@ -135,8 +136,8 @@ public class PersonPermissionE2ETests : TestBase
             .Create()
             .WithSubject(subject)
             .WithPermissions(
-                PersonStandardPermissionType.InvoiceRead,
-                PersonStandardPermissionType.InvoiceWrite)
+                PersonPermissionType.InvoiceRead,
+                PersonPermissionType.InvoiceWrite)
             .WithDescription(description)
             .Build();
 

@@ -3,6 +3,7 @@ using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Core.Models.Permissions.Entity;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Tests.Utils;
 using System.Security.Cryptography.X509Certificates;
@@ -23,10 +24,10 @@ public class EntityPermissionsE2ETestsScenarios : TestBase
         string contextNip = MiscellaneousUtils.GetRandomNip();
         string subjectNip = MiscellaneousUtils.GetRandomNip();
 
-        EntitySubjectIdentifier BR_subject =
-            new EntitySubjectIdentifier
+        GrantPermissionsEntitySubjectIdentifier BR_subject =
+            new GrantPermissionsEntitySubjectIdentifier
             {
-                Type = EntitySubjectIdentifierType.Nip,
+                Type = GrantPermissionsEntitySubjectIdentifierType.Nip,
                 Value = subjectNip
             };
 
@@ -88,10 +89,10 @@ public class EntityPermissionsE2ETestsScenarios : TestBase
         string contextNip = MiscellaneousUtils.GetRandomNip();
         string subjectNip = MiscellaneousUtils.GetRandomNip();
 
-        EntitySubjectIdentifier subject =
-            new EntitySubjectIdentifier
+        GrantPermissionsEntitySubjectIdentifier subject =
+            new GrantPermissionsEntitySubjectIdentifier
             {
-                Type = EntitySubjectIdentifierType.Nip,
+                Type = GrantPermissionsEntitySubjectIdentifierType.Nip,
                 Value = subjectNip
             };
 
@@ -148,17 +149,17 @@ public class EntityPermissionsE2ETestsScenarios : TestBase
         string brNip = MiscellaneousUtils.GetRandomNip(); // biuro rachunkowe
         string kdpNip = MiscellaneousUtils.GetRandomNip(); // kancelaria doradztwa podatkowego
 
-        EntitySubjectIdentifier brSubject =
-            new EntitySubjectIdentifier
+        GrantPermissionsEntitySubjectIdentifier brSubject =
+            new GrantPermissionsEntitySubjectIdentifier
             {
-                Type = EntitySubjectIdentifierType.Nip,
+                Type = GrantPermissionsEntitySubjectIdentifierType.Nip,
                 Value = brNip
             };
 
-        EntitySubjectIdentifier kdpSubject =
-            new EntitySubjectIdentifier
+        GrantPermissionsEntitySubjectIdentifier kdpSubject =
+            new GrantPermissionsEntitySubjectIdentifier
             {
-                Type = EntitySubjectIdentifierType.Nip,
+                Type = GrantPermissionsEntitySubjectIdentifierType.Nip,
                 Value = kdpNip
             };
 
@@ -229,7 +230,7 @@ public class EntityPermissionsE2ETestsScenarios : TestBase
     }
 
     private async Task<OperationResponse> GrantPermissionsAsync(
-            EntitySubjectIdentifier subject,
+            GrantPermissionsEntitySubjectIdentifier subject,
             AuthenticationOperationStatusResponse authorizationInfo,
             EntityPermission[] permissions)
     {

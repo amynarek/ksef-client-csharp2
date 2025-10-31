@@ -35,7 +35,7 @@ public class QrCodeOnlineE2ETests : TestBase
     public QrCodeOnlineE2ETests(QrCodeOnlineE2EScenarioFixture fixture)
     {
         _fixture = fixture;
-        _linkSvc = new VerificationLinkService(new KSeFClientOptions() { BaseUrl = KsefEnviromentsUris.TEST });
+        _linkSvc = new VerificationLinkService(new KSeFClientOptions() { BaseUrl = KsefEnvironmentsUris.TEST });
         _encryptionData = CryptographyService.GetEncryptionData();
         _qrSvc = new QrCodeService();
         _fixture.Nip = MiscellaneousUtils.GetRandomNip();
@@ -45,9 +45,9 @@ public class QrCodeOnlineE2ETests : TestBase
     }
 
     [Theory]
-    [InlineData([SystemCodeEnum.FA2, "invoice-template-fa-2.xml"])]
-    [InlineData([SystemCodeEnum.FA3, "invoice-template-fa-3.xml"])]
-    public async Task QrCodeOnlineE2ETest(SystemCodeEnum systemCode, string invoiceTemplate)
+    [InlineData([SystemCode.FA2, "invoice-template-fa-2.xml"])]
+    [InlineData([SystemCode.FA3, "invoice-template-fa-3.xml"])]
+    public async Task QrCodeOnlineE2ETest(SystemCode systemCode, string invoiceTemplate)
     {
         OpenOnlineSessionResponse openSessionResponse = await OnlineSessionUtils.OpenOnlineSessionAsync(
             KsefClient,

@@ -2,6 +2,7 @@ using KSeF.Client.Api.Builders.X509Certificates;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models.Permissions;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Tests.Utils;
 
@@ -29,9 +30,9 @@ public class PersonalPermissionsPeselInNipContextE2ETests : TestBase
             await AuthenticationUtils.AuthenticateAsync(KsefClient, SignatureService, contextNip);
 
         // Nadaj uprawnienia dla osoby (PESEL) w kontekście NIP właściciela
-        PersonSubjectIdentifier subject = new PersonSubjectIdentifier
+        GrantPermissionsPersonSubjectIdentifier subject = new GrantPermissionsPersonSubjectIdentifier
         {
-            Type = PersonSubjectIdentifierType.Pesel,
+            Type = GrantPermissionsPersonSubjectIdentifierType.Pesel,
             Value = pesel
         };
 
@@ -43,8 +44,8 @@ public class PersonalPermissionsPeselInNipContextE2ETests : TestBase
             subject,
             new[]
             {
-                PersonStandardPermissionType.InvoiceRead,
-                PersonStandardPermissionType.InvoiceWrite
+                PersonPermissionType.InvoiceRead,
+                PersonPermissionType.InvoiceWrite
             },
             description);
 
@@ -70,9 +71,9 @@ public class PersonalPermissionsPeselInNipContextE2ETests : TestBase
         // Act: pobierz moje uprawnienia dla osoby w bieżącym kontekście NIP, filtrując po kontekście na poziomie zapytania
         PersonalPermissionsQueryRequest query = new PersonalPermissionsQueryRequest
         {
-            ContextIdentifier = new PersonalContextIdentifier
+            ContextIdentifier = new PersonalPermissionsContextIdentifier
             {
-                Type = PersonalContextIdentifierType.Nip,
+                Type = PersonalPermissionsContextIdentifierType.Nip,
                 Value = contextNip
             }
         };

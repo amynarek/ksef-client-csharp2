@@ -3,6 +3,7 @@ using KSeF.Client.Api.Builders.SubUnitPermissions;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models.Permissions;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Core.Models.Permissions.SubUnit;
 using KSeF.Client.Tests.Utils;
@@ -127,9 +128,9 @@ public class SubunitPermissionsE2ETests : TestBase
         #region Wyszukaj uprawnienia nadane administratorowi jednostki podrzędnej - dedykowana końcówka do wyszukiwania uprawnień
         SubunitPermissionsQueryRequest request = new SubunitPermissionsQueryRequest
         {
-            SubunitIdentifier = new SubUnitPermissionsSubunitIdentifier
+            SubunitIdentifier = new SubunitPermissionsSubunitIdentifier
             {
-                Type = SubUnitIQuerydentifierType.InternalId,
+                Type = SubunitIQuerydentifierType.InternalId,
                 Value = _fixture.UnitNipInternal
             }
         };
@@ -150,7 +151,7 @@ public class SubunitPermissionsE2ETests : TestBase
         {
             SubordinateEntityIdentifier = new EntityPermissionsSubordinateEntityIdentifier
             {
-                Type = SubUnitContextIdentifierType.Nip,
+                Type = EntityPermissionsSubordinateEntityIdentifierType.Nip,
                 Value = _fixture.Unit.Value
             }
         };
@@ -238,12 +239,12 @@ public class SubunitPermissionsE2ETests : TestBase
     private async Task<OperationResponse> GrantPersonPermissionsAsync()
     {
         GrantPermissionsPersonRequest personGrantRequest = GrantPersonPermissionsRequestBuilder.Create()
-            .WithSubject(new PersonSubjectIdentifier
+            .WithSubject(new GrantPermissionsPersonSubjectIdentifier
             {
-                Type = PersonSubjectIdentifierType.Nip,
+                Type = GrantPermissionsPersonSubjectIdentifierType.Nip,
                 Value = _fixture.Subunit.Value
             })
-            .WithPermissions(PersonStandardPermissionType.SubunitManage, PersonStandardPermissionType.CredentialsManage)
+            .WithPermissions(PersonPermissionType.SubunitManage, PersonPermissionType.CredentialsManage)
             .WithDescription("E2E test - nadanie uprawnień osobowych do zarządzania jednostką podrzędną")
             .Build();
 
@@ -257,13 +258,13 @@ public class SubunitPermissionsE2ETests : TestBase
     /// <returns>Numer referencyjny operacji.</returns>
     private async Task<OperationResponse> GrantSubunitPermissionsAsync()
     {
-        GrantPermissionsSubUnitRequest subunitGrantRequest =
-            GrantSubUnitPermissionsRequestBuilder
+        GrantPermissionsSubunitRequest subunitGrantRequest =
+            GrantSubunitPermissionsRequestBuilder
             .Create()
             .WithSubject(_fixture.SubjectIdentifier)
-            .WithContext(new SubUnitContextIdentifier
+            .WithContext(new SubunitContextIdentifier
             {
-                Type = SubUnitContextIdentifierType.InternalId,
+                Type = SubunitContextIdentifierType.InternalId,
                 Value = _fixture.UnitNipInternal
             })
             .WithSubunitName("E2E Test Subunit")

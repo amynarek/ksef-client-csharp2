@@ -1,13 +1,15 @@
-using System.Text;
-using System.Security.Cryptography.X509Certificates;
 using KSeF.Client.Api.Builders.Auth;
+using KSeF.Client.Api.Services;
+using KSeF.Client.Clients;
+using KSeF.Client.Core.Interfaces.Clients;
+using KSeF.Client.Core.Interfaces.Services;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.DI;
 using KSeF.Client.Tests.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using KSeF.Client.Core.Interfaces.Clients;
-using KSeF.Client.Core.Interfaces.Services;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 // Tryb wyjścia: screen (domyślnie) lub file
 string outputMode = ParseOutputMode(args);
@@ -18,15 +20,32 @@ Console.WriteLine($"Tryb wyjścia: {outputMode}");
 ServiceCollection services = new ServiceCollection();
 services.AddKSeFClient(options =>
 {
-    options.BaseUrl = KsefEnviromentsUris.TEST;
+    options.BaseUrl = KsefEnvironmentsUris.TEST;
 });
 
-services.AddCryptographyClient(options =>
+// UWAGA! w testach nie używamy AddCryptographyClient tylko rejestrujemy ręcznie, bo on uruchamia HostedService w tle
+services.AddSingleton<ICryptographyClient, CryptographyClient>();
+services.AddSingleton<ICryptographyService, CryptographyService>(serviceProvider =>
 {
-    options.WarmupOnStart = WarmupMode.NonBlocking;
+    // Definicja domyślnego delegata
+    return new CryptographyService(async cancellationToken =>
+    {
+        using IServiceScope scope = serviceProvider.CreateScope();
+        ICryptographyClient cryptographyClient = scope.ServiceProvider.GetRequiredService<ICryptographyClient>();
+        return await cryptographyClient.GetPublicCertificatesAsync(cancellationToken);
+    });
 });
+// Rejestracja usługi hostowanej (Hosted Service) jako singleton na potrzeby testów
+services.AddSingleton<CryptographyWarmupHostedService>();
 
 ServiceProvider provider = services.BuildServiceProvider();
+
+using IServiceScope scope = provider.CreateScope();
+
+// opcjonalne: inicjalizacja lub inne czynności startowe
+// Uruchomienie usługi hostowanej w trybie blokującym (domyślnym) na potrzeby testów
+scope.ServiceProvider.GetRequiredService<CryptographyWarmupHostedService>()
+           .StartAsync(CancellationToken.None).GetAwaiter().GetResult();
 
 IKSeFClient ksefClient = provider.GetRequiredService<IKSeFClient>();
 ISignatureService signatureService = provider.GetRequiredService<ISignatureService>();
@@ -60,7 +79,7 @@ try
 
     // 5) Samopodpisany certyfikat do podpisu XAdES
     Console.WriteLine("[5] Generowanie samopodpisanego certyfikatu testowego (Utils)...");
-    System.Security.Cryptography.X509Certificates.X509Certificate2 certificate = CertificateUtils.GetPersonalCertificate("A", "R", "TINPL", nip, "A R");
+    X509Certificate2 certificate = CertificateUtils.GetPersonalCertificate("A", "R", "TINPL", nip, "A R");
     Console.WriteLine($"    Certyfikat: {certificate.Subject}");
 
     // (5a) Zapis certyfikatu gdy tryb file

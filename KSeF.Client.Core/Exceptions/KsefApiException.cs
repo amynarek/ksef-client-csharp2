@@ -30,8 +30,9 @@ namespace KSeF.Client.Core.Exceptions
         /// <param name="statusCode">Kod stanu HTTP.</param>
         /// <param name="serviceCode">Opcjonalny kod usługi z API.</param>
         /// <param name="error">Szczegóły błędu zwrócone przez API (opcjonalnie).</param>
-        public KsefApiException(string message, HttpStatusCode statusCode, string serviceCode = null, ApiErrorResponse error = null)
-            : base(message)
+        /// <param name="innerException">Wewnętrzny wyjątek, jeśli wystąpił (opcjonalnie).</param>
+        public KsefApiException(string message, HttpStatusCode statusCode, string serviceCode = null, ApiErrorResponse error = null, Exception innerException = null)
+            : base(message, innerException)
         {
             StatusCode = statusCode;
             ServiceCode = serviceCode;

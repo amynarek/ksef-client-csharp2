@@ -2,13 +2,6 @@
 using KSeF.Client.Api.Builders.X509Certificates;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Tests.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.Pkcs;
-using System.Security.Cryptography.Xml;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KSeF.Client.Tests.Core.E2E.Signatures;
 public class SignatureE2ETests : TestBase

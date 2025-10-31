@@ -6,7 +6,7 @@ using KSeF.Client.Core.Models.Peppol;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Core.Models.Permissions.Entity;
 using KSeF.Client.Core.Models.Permissions.EUEntity;
-using KSeF.Client.Core.Models.Permissions.EUEntityRepresentative;
+using KSeF.Client.Core.Models.Permissions.EuEntityRepresentative;
 using KSeF.Client.Core.Models.Permissions.IndirectEntity;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Core.Models.Permissions.SubUnit;
@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Collections.Generic;
 using KSeF.Client.Core.Models.Permissions.Authorizations;
+using System;
 
 namespace KSeF.Client.Core.Interfaces.Clients
 {
@@ -117,7 +118,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// Odświeżanie tokenu dostępu
         /// </summary>
         /// <remarks>
-        /// Zwraca odświezony access token
+        /// Zwraca odświeżony access token
         /// </remarks>
         /// <param name="refreshToken">Refresh token.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
@@ -270,15 +271,15 @@ namespace KSeF.Client.Core.Interfaces.Clients
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <summary>
-        /// Pobranie UPO faktuy z sesji na podstawie numeru KSeF
+        /// Pobranie UPO faktury z sesji na podstawie numeru KSeF
         /// </summary>
         /// <remarks>
-        /// Zwraca UPO faktuy przesłanej w sesji na podstawie jego numeru KSeF.
+        /// Zwraca UPO faktury przesłanej w sesji na podstawie jego numeru KSeF.
         /// </remarks>
         /// <param name="sessionReferenceNumber">Numer referencyjny sesji</param>
-        /// <param name="ksefNumber">Numer KSeF faktuy</param>
+        /// <param name="ksefNumber">Numer KSeF faktury</param>
         /// <param name="accessToken">Access token</param>
-        /// <param name="cancellationToken">Cancellation token./param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns>UPO w formie XML</returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
@@ -354,7 +355,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// </summary>
         /// <param name="permissionId">Id uprawnienia.</param>
         /// <param name="accessToken">Token dostępu.</param>
-        /// <param name="cancellationToken">Canccelation token.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="OperationResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
@@ -366,7 +367,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// </summary>
         /// <param name="permissionId">Id uprawnienia.</param>
         /// <param name="accessToken">Token dostępu.</param>
-        /// <param name="cancellationToken">Canccelation token.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="OperationResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
@@ -377,7 +378,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         ///Wymagane uprawnienia: CredentialsManage, CredentialsRead.
         /// </summary>    
         /// <param name="accessToken">Token dostępu.</param>
-        /// <param name="cancellationToken">Canccelation token.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="PermissionsAttachmentAllowedResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
@@ -388,7 +389,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// Pobranie listy moich uprawnień.
         /// </summary>
         /// <param name="requestPayload"><see cref="PersonalPermissionsQueryRequest"/></param>
-        /// <param name="accessToken">Acces token</param>
+        /// <param name="accessToken">Access token</param>
         /// <param name="pageSize">Ilość elementów na stronie (domyślnie 10)</param>
         /// <param name="pageOffset">Index strony wyników (domyślnie 0)</param>
         /// <param name="cancellationToken"></param>
@@ -525,37 +526,37 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// <summary>
         /// Nadanie uprawnień administratora podmiotu podrzędnego
         /// </summary>
-        /// <param name="requestPayload"><see cref="GrantPermissionsSubUnitRequest"/></param>
+        /// <param name="requestPayload"><see cref="GrantPermissionsSubunitRequest"/></param>
         /// <param name="accessToken">Access token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns><see cref="OperationResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
-        Task<OperationResponse> GrantsPermissionSubUnitAsync( GrantPermissionsSubUnitRequest requestPayload,  string accessToken, CancellationToken cancellationToken = default);
+        Task<OperationResponse> GrantsPermissionSubUnitAsync( GrantPermissionsSubunitRequest requestPayload,  string accessToken, CancellationToken cancellationToken = default);
 
 
         /// <summary>
         /// Nadanie uprawnień administratora podmiotu unijnego
         /// </summary>
-        /// <param name="requestPayload"><see cref="GrantPermissionsEUEntityRequest"/></param>
+        /// <param name="requestPayload"><see cref="GrantPermissionsEuEntityRequest"/></param>
         /// <param name="accessToken">Access token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns><see cref="OperationResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
-        Task<OperationResponse> GrantsPermissionEUEntityAsync( GrantPermissionsEUEntityRequest requestPayload, string accessToken, CancellationToken cancellationToken = default);
+        Task<OperationResponse> GrantsPermissionEUEntityAsync( GrantPermissionsEuEntityRequest requestPayload, string accessToken, CancellationToken cancellationToken = default);
 
 
         /// <summary>
         /// Nadanie uprawnień administratora podmiotu unijnego
         /// </summary>
-        /// <param name="requestPayload"><see cref="GrantPermissionsEUEntitRepresentativeRequest"/></param>
+        /// <param name="requestPayload"><see cref="GrantPermissionsEuEntityRepresentativeRequest"/></param>
         /// <param name="accessToken">Access token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns><see cref="OperationResponse"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
-        Task<OperationResponse> GrantsPermissionEUEntityRepresentativeAsync( GrantPermissionsEUEntitRepresentativeRequest requestPayload,  string accessToken,  CancellationToken cancellationToken = default);
+        Task<OperationResponse> GrantsPermissionEUEntityRepresentativeAsync( GrantPermissionsEuEntityRepresentativeRequest requestPayload,  string accessToken,  CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Pobranie danych o limitach certyfikatów.
@@ -592,7 +593,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// <summary>
         /// Zwraca informacje o statusie wniosku certyfikacyjnego.
         /// </summary>
-        /// <param name="certificateRequestReferenceNumber">Numer refrencyjny wniosku certyfikacyjnego.</param>
+        /// <param name="certificateRequestReferenceNumber">Numer referencyjny wniosku certyfikacyjnego.</param>
         /// <param name="accessToken">Access token</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns><see cref="CertificateEnrollmentStatusResponse"/></returns>
@@ -637,7 +638,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
 
 
         /// <summary>
-        /// Gneruje nowy token KSeF.
+        /// Generuje nowy token KSeF.
         /// </summary>
         /// <param name="requestPayload"><see cref="KsefTokenRequest"/></param>
         /// <param name="accessToken">Access token</param>
@@ -662,7 +663,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         string accessToken,
         ICollection<AuthenticationKsefTokenStatus> statuses = null,
         string authorIdentifier = null,
-        Models.Token.ContextIdentifierType? authorIdentifierType = null,
+        Models.Token.TokenContextIdentifierType? authorIdentifierType = null,
         string description = null,
         string continuationToken = null,
         int? pageSize = null,
@@ -671,13 +672,13 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// <summary>
         /// Pobranie statusu tokena
         /// </summary>
-        /// <param name="tokenRefrenceNumber">Numer referencyjny tokena.</param>
+        /// <param name="tokenReferenceNumber">Numer referencyjny tokena.</param>
         /// <param name="accessToken">Access token.</param>
         /// <param name="cancellationToken">Cancellation token.</param>
         /// <returns><see cref="AuthenticationKsefToken"/></returns>
         /// <exception cref="ApiException">Nieprawidłowe żądanie. (400 Bad request)</exception>
         /// <exception cref="ApiException">Brak autoryzacji. (401 Unauthorized)</exception>
-        Task<AuthenticationKsefToken> GetKsefTokenAsync(string tokenRefrenceNumber, string accessToken, CancellationToken cancellationToken = default);
+        Task<AuthenticationKsefToken> GetKsefTokenAsync(string tokenReferenceNumber, string accessToken, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Unieważnienie tokena.
@@ -694,7 +695,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// </summary>
         /// <param name="openBatchSessionResponse"><see cref="OpenBatchSessionResponse"/></param>
         /// <param name="parts">Kolekcja trzymająca informacje o partach</param>
-        /// <param name="cancellationToken">Cancellaton token</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <exception cref="AggregateException"></exception>
         Task SendBatchPartsAsync(OpenBatchSessionResponse openBatchSessionResponse, ICollection<BatchPartSendingInfo> parts, CancellationToken cancellationToken = default);
 
@@ -703,7 +704,7 @@ namespace KSeF.Client.Core.Interfaces.Clients
         /// </summary>
         /// <param name="openBatchSessionResponse"><see cref="OpenBatchSessionResponse"/></param>
         /// <param name="parts">Kolekcja trzymająca informacje o partach</param>
-        /// <param name="cancellationToken">Cancellaton token</param>
+        /// <param name="cancellationToken">Cancellation token</param>
         /// <exception cref="AggregateException"></exception>
         Task SendBatchPartsWithStreamAsync(OpenBatchSessionResponse openBatchSessionResponse, ICollection<BatchPartStreamSendingInfo> parts, CancellationToken cancellationToken = default);
 
@@ -752,5 +753,11 @@ namespace KSeF.Client.Core.Interfaces.Clients
             string accessToken,
             CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Pobiera UPO z adresu Uri.
+        /// </summary>
+        /// <param name="url">Url do pobrania UPO.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        Task<string> GetUpoAsync(Uri uri, CancellationToken cancellationToken = default);
     }
 }

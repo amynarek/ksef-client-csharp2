@@ -1,9 +1,10 @@
-using KSeF.Client.Api.Builders.EUEntityPermissions;
+using KSeF.Client.Api.Builders.EuEntityPermissions;
 using KSeF.Client.Core.Models.Permissions.EUEntity;
 using KSeF.Client.Tests.Utils;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 
 namespace KSeF.Client.Tests.Core.E2E.Permissions.EuEntityPermissions;
 
@@ -38,9 +39,9 @@ public class EuEntityPermissionE2ETests : TestBase
     {
         #region Nadaj uprawnienia jednostce EU
         // Arrange
-        EUEntityContextIdentifier contextIdentifier = new EUEntityContextIdentifier
+        EuEntityContextIdentifier contextIdentifier = new EuEntityContextIdentifier
         {
-            Type = EUEntityContextIdentifierType.NipVatUe,
+            Type = EuEntityContextIdentifierType.NipVatUe,
             Value = TestFixture.NipVatUe
         };
 
@@ -104,9 +105,9 @@ public class EuEntityPermissionE2ETests : TestBase
     /// </summary>
     /// <param name="contextIdentifier"></param>
     /// <returns>Numer referencyjny operacji</returns>
-    private async Task<OperationResponse> GrantPermissionForEuEntityAsync(EUEntityContextIdentifier contextIdentifier)
+    private async Task<OperationResponse> GrantPermissionForEuEntityAsync(EuEntityContextIdentifier contextIdentifier)
     {
-        GrantPermissionsEUEntityRequest grantPermissionsRequest = GrantEUEntityPermissionsRequestBuilder
+        GrantPermissionsEuEntityRequest grantPermissionsRequest = GrantEuEntityPermissionsRequestBuilder
             .Create()
             .WithSubject(TestFixture.EuEntity)
             .WithSubjectName(EuEntitySubjectName)

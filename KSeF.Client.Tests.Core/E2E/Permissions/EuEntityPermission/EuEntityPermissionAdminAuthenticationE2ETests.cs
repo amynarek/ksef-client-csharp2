@@ -1,8 +1,9 @@
-using KSeF.Client.Api.Builders.EUEntityPermissions;
+using KSeF.Client.Api.Builders.EuEntityPermissions;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Authorization;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Core.Models.Permissions.EUEntity;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Tests.Utils;
 using System.Security.Cryptography.X509Certificates;
 
@@ -81,17 +82,17 @@ namespace KSeF.Client.Tests.Core.E2E.Permissions.EuEntityPermissions
             #region Nadanie uprawnień administracyjnych jednostce EU
 
             // Właściciel nadaje uprawnienia administracyjne jednostce UE
-            GrantPermissionsEUEntityRequest grantPermissionsRequest = GrantEUEntityPermissionsRequestBuilder
+            GrantPermissionsEuEntityRequest grantPermissionsRequest = GrantEuEntityPermissionsRequestBuilder
                 .Create()
-                .WithSubject(new EUEntitySubjectIdentifier
+                .WithSubject(new EuEntitySubjectIdentifier
                 {
-                    Type = EUEntitySubjectIdentifierType.Fingerprint,
+                    Type = EuEntitySubjectIdentifierType.Fingerprint,
                     Value = euAdminCertificateFingerprint
                 })
                 .WithSubjectName(AdminSubjectName)
-                .WithContext(new EUEntityContextIdentifier
+                .WithContext(new EuEntityContextIdentifier
                 {
-                    Type = EUEntityContextIdentifierType.NipVatUe,
+                    Type = EuEntityContextIdentifierType.NipVatUe,
                     Value = ownerNipVatEu
                 })
                 .WithDescription(AdminPermissionDescription)

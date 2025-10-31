@@ -1,9 +1,5 @@
-﻿using KSeF.Client.Api.Services;
-using KSeF.Client.Core.Interfaces.Clients;
-using KSeF.Client.Core.Interfaces.Services;
-using KSeF.Client.DI;
+﻿using KSeF.Client.DI;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.Extensions.Options;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -11,11 +7,11 @@ WebApplicationBuilder builder = Microsoft.AspNetCore.Builder.WebApplication.Crea
 
 builder.Services.AddKSeFClient(options =>
 {
-    options.BaseUrl = 
+    options.BaseUrl =
         builder.Configuration.GetSection("ApiSettings")
                 .GetValue<string>("BaseUrl")
-                ?? KsefEnviromentsUris.TEST;
-    
+                ?? KsefEnvironmentsUris.TEST;
+
     options.CustomHeaders =
         builder.Configuration
                 .GetSection("ApiSettings:customHeaders")
@@ -23,22 +19,9 @@ builder.Services.AddKSeFClient(options =>
               ?? new Dictionary<string, string>();
 });
 
-builder.Services.AddCryptographyClient(options =>
-{
-    options.WarmupOnStart = WarmupMode.NonBlocking; // domyślnie umożliwiamy kontynuację startu aplikacji bez względu na status pobierania certyfikatów publicznych KSeF.
-},
-async (serviceProvider, cancellationToken) =>
-{
-    ICryptographyClient cryptographyClient = serviceProvider.GetRequiredService<ICryptographyClient>();
-    return await cryptographyClient.GetPublicCertificatesAsync(cancellationToken);
-});
-
-builder.Services.AddHostedService(provider =>
-{
-    ICryptographyService cryptographyService = provider.GetRequiredService<ICryptographyService>();
-    IOptions<CryptographyClientOptions> options = provider.GetRequiredService<IOptions<CryptographyClientOptions>>();
-    return new CryptographyWarmupHostedService(cryptographyService, options);
-});
+// UWAGA: w aplikacji webowej używamy AddCryptographyClient do rejestracji CryptographyClient i powiązanych serwisów
+// tutaj z domyślnym delegatem pobierającym certyfikaty, zobacz dostępne parametry w dokumentacji metody rozszerzającej
+builder.Services.AddCryptographyClient();
 
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

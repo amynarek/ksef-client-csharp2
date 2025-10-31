@@ -20,10 +20,10 @@ namespace KSeF.Client.Tests.Features
         }
 
         [Theory]
-        [InlineData(SystemCodeEnum.FA2, "invoice-template-fa-2.xml")]
-        [InlineData(SystemCodeEnum.FA3, "invoice-template-fa-3.xml")]
+        [InlineData(SystemCode.FA2, "invoice-template-fa-2.xml")]
+        [InlineData(SystemCode.FA3, "invoice-template-fa-3.xml")]
         [Trait("Scenario", "Posiadając uprawnienie właścicielskie pytamy o fakturę wysłaną")]
-        public async Task GivenNewInvoice_SendedToKsef_ThenReturnsNewKsefNumber(SystemCodeEnum systemCode, string invoiceTemplatePath)
+        public async Task GivenNewInvoice_SendedToKsef_ThenReturnsNewKsefNumber(SystemCode systemCode, string invoiceTemplatePath)
         {
             // authenticated in constructor
             Assert.NotNull(authToken);
@@ -84,10 +84,10 @@ namespace KSeF.Client.Tests.Features
         }
 
         [Theory]
-        [InlineData(SystemCodeEnum.FA2, "invoice-template-fa-2.xml")]
-        [InlineData(SystemCodeEnum.FA3, "invoice-template-fa-3.xml")]
+        [InlineData(SystemCode.FA2, "invoice-template-fa-2.xml")]
+        [InlineData(SystemCode.FA3, "invoice-template-fa-3.xml")]
         [Trait("Scenario", "Posiadając uprawnienie właścicielskie wysyłamy szyfrowaną fakturę z nieprawidłowym numerem NIP sprzedawcy")]
-        public async Task GivenInvalidNewInvoice_SendedToKsef_ThenReturnsErrorInvalidKsefNumber(SystemCodeEnum systemCode, string invoiceTemplatePath)
+        public async Task GivenInvalidNewInvoice_SendedToKsef_ThenReturnsErrorInvalidKsefNumber(SystemCode systemCode, string invoiceTemplatePath)
         {
             string wrongNIP = MiscellaneousUtils.GetRandomNip();
 
@@ -131,13 +131,13 @@ namespace KSeF.Client.Tests.Features
         }
 
         [Theory]
-        [InlineData(SystemCodeEnum.FA3, "invoice-template-fa-3.xml")]
+        [InlineData(SystemCode.FA3, "invoice-template-fa-3.xml")]
         [Trait("Category", "SchemaValidationError")]
         [Trait("Field", "DataWytworzeniaFa")]
         [Trait("Condition", "< 2025-09-01")]
         [Trait("Scenario", "Invoice rejected when DataWytworzeniaFa < 2025-09-01")]
         public async Task GivenInvoice_WithDataWytworzeniaFa_BeforeCutoff_ShouldFail(
-            SystemCodeEnum systemCode, string templatePath)
+            SystemCode systemCode, string templatePath)
         {
             DateTime cutoffUtc = new DateTime(2025, 8, 31);
 
@@ -171,14 +171,14 @@ namespace KSeF.Client.Tests.Features
         }
 
         [Theory]
-        [InlineData(SystemCodeEnum.FA2, "invoice-template-fa-2.xml")]
-        [InlineData(SystemCodeEnum.FA3, "invoice-template-fa-3.xml")]
+        [InlineData(SystemCode.FA2, "invoice-template-fa-2.xml")]
+        [InlineData(SystemCode.FA3, "invoice-template-fa-3.xml")]
         [Trait("ErrorType", "SchemaValidationError")]
         [Trait("Field", "P_1")]
         [Trait("Condition", "> today")]
         [Trait("Scenario", "Invoice rejected when P_1 is set to a future date")]
         public async Task GivenInvoice_WithP1_InFuture_ShouldFail(
-            SystemCodeEnum systemCode, string templatePath)
+            SystemCode systemCode, string templatePath)
         {
             Core.Models.Sessions.EncryptionData encryptionData = CryptographyService.GetEncryptionData();
 
@@ -226,7 +226,7 @@ namespace KSeF.Client.Tests.Features
 
             InvoiceQueryFilters invoiceMetadataQueryRequest = new InvoiceQueryFilters
             {
-                SubjectType = SubjectType.Subject1,
+                SubjectType = InvoiceSubjectType.Subject1,
                 DateRange = new DateRange
                 {
                     From = DateTime.UtcNow.AddDays(-30),

@@ -37,7 +37,7 @@ public class ActiveSessionsController : ControllerBase
     /// <summary>
     /// Unieważnia sesję powiązaną z tokenem użytym do wywołania tej operacji.
     /// </summary>
-    /// <param name="token">Acces token lub Refresh token.</param>
+    /// <param name="token">Access token lub Refresh token.</param>
     /// <param name="cancellationToken"></param>
     [HttpDelete("revoke-current-session")]
     public async Task<ActionResult> RevokeCurrentSessionAsync([FromQuery] string token, CancellationToken cancellationToken)

@@ -1,9 +1,9 @@
 using KSeF.Client.Api.Services;
 using KSeF.Client.Clients;
-using KSeF.Client.Core.Interfaces.Rest;
 using KSeF.Client.Core.Infrastructure.Rest;
 using KSeF.Client.Core.Interfaces;
 using KSeF.Client.Core.Interfaces.Clients;
+using KSeF.Client.Core.Interfaces.Rest;
 using KSeF.Client.Core.Interfaces.Services;
 using KSeF.Client.Core.Models.Certificates;
 using KSeF.Client.Http;
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="services">Rozszerzany interfejs</param>
     /// <param name="configure">Opcje klienta KSeF</param>
-    /// <param name="pemCertificatesFetcher">Delegat służacy do pobrania publicznych certyfikatów KSeF</param>
+    /// <param name="pemCertificatesFetcher">Delegat służący do pobrania publicznych certyfikatów KSeF</param>
     /// <exception cref="ArgumentException"></exception>
     public static IServiceCollection AddKSeFClient(this IServiceCollection services,
         Action<KSeFClientOptions> configure)
@@ -66,9 +66,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITestDataClient, TestDataClient>();
         services.AddScoped<IAuthCoordinator, AuthCoordinator>();
         services.AddScoped<ILimitsClient, LimitsClient>();
-        services.AddHostedService<CryptographyWarmupHostedService>();
         
-
         services.AddScoped<ISignatureService, SignatureService>();
         services.AddScoped<IQrCodeService, QrCodeService>();
         services.AddSingleton<IPersonTokenService, PersonTokenService>();
@@ -93,33 +91,37 @@ public static class ServiceCollectionExtensions
     /// Rejestruje wszystkie potrzebne serwisy do korzystania z klienta kryptograficznego.
     /// </summary>
     /// <param name="services">Rozszerzany interfejs</param>
-    /// <param name="configure">Opcje klienta kryptograficznego</param>
-    /// <param name="pemCertificatesFetcher">Delegat służacy do pobrania publicznych certyfikatów KSeF</param>
+    /// <param name="warmupMode">Tryb "rozgrzewania" usługi. Domyślnie: Blocking.</param>
+    /// <param name="pemCertificatesFetcher">Delegat służący do pobrania publicznych certyfikatów KSeF</param>
     /// <exception cref="ArgumentException"></exception>
     public static IServiceCollection AddCryptographyClient(this IServiceCollection services,
-        Action<CryptographyClientOptions> configure,
-        Func<IServiceProvider, CancellationToken, Task<ICollection<PemCertificateInfo>>> pemCertificatesFetcher = null)
-    {
-        CryptographyClientOptions options = new CryptographyClientOptions();
-        configure(options);
+        Func<CancellationToken, Task<ICollection<PemCertificateInfo>>> pemCertificatesFetcher = null,
+        CryptographyServiceWarmupMode warmupMode = CryptographyServiceWarmupMode.Blocking)
+        {
 
+        // 1. Rejestracja klienta kryptograficznego jako singleton
         services.TryAddSingleton<ICryptographyClient, CryptographyClient>();
 
-        services.TryAddSingleton<ICryptographyService>(serviceProvider =>
+        // 2. Rejestracja serwisu kryptograficznego z użyciem delegata
+        services.AddSingleton<ICryptographyService, CryptographyService>(serviceProvider =>
         {
-            if (pemCertificatesFetcher != null)
+            // Definicja domyślnego delegata, jeśli nie został dostarczony
+            Func<CancellationToken, Task<ICollection<PemCertificateInfo>>> finalFetcher
+            = pemCertificatesFetcher ?? (async (cancellationToken) =>
             {
-                return new CryptographyService(cancellationToken => pemCertificatesFetcher(serviceProvider, cancellationToken));
-            }
-            else
-            {
-                return new CryptographyService(async cancellationToken =>
-                {
-                    using IServiceScope scope = serviceProvider.CreateScope();
-                    ICryptographyClient cryptographyClient = scope.ServiceProvider.GetRequiredService<ICryptographyClient>();
-                    return await cryptographyClient.GetPublicCertificatesAsync(cancellationToken);
-                });
-            }
+                using IServiceScope scope = serviceProvider.CreateScope();
+                ICryptographyClient cryptographyClient = scope.ServiceProvider.GetRequiredService<ICryptographyClient>();
+                return await cryptographyClient.GetPublicCertificatesAsync(cancellationToken);
+            });
+
+            return new CryptographyService(finalFetcher);
+        });
+
+        // 3. Rejestracja usługi hostowanej (Hosted Service) z wybranym trybem startu
+        services.AddHostedService(provider =>
+        {
+            ICryptographyService cryptographyService = provider.GetRequiredService<ICryptographyService>();
+            return new CryptographyWarmupHostedService(cryptographyService, warmupMode);
         });
 
         return services;

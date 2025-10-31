@@ -52,6 +52,7 @@
 		<PackageTags>ksef; e-invoicing; polish; dotnet; integration; invoices</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
 </Project>

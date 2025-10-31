@@ -11,10 +11,5 @@ namespace KSeF.Client.Core.Models.Peppol
         /// Nazwa dostawcy usług Peppol.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// Adres URL lub endpoint dostawcy.
-        /// </summary>
-        public string Endpoint { get; set; }
     }
 }

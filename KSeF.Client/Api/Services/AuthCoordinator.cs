@@ -77,12 +77,6 @@ public class AuthCoordinator : IAuthCoordinator
         do
         {
             authStatus = await _ksefClient.GetAuthStatusAsync(submissionResponse.ReferenceNumber, submissionResponse.AuthenticationToken.Token, cancellationToken);
-
-            Console.WriteLine(
-                $"Polling: StatusCode={authStatus.Status.Code}, " +
-                $"Description='{authStatus.Status.Description}', " +                
-                $"Details='{string.Join(", ",(authStatus.Status.Details ?? new List<string>()))}', " +                
-                $"Elapsed={DateTime.UtcNow - startTime:mm\\:ss}");
             
             if (authStatus.Status.Code == 400)
             {
@@ -101,9 +95,8 @@ public class AuthCoordinator : IAuthCoordinator
 
         if (authStatus.Status.Code != 200)
         {
-            Console.WriteLine("Timeout: Brak tokena po 2 minutach.");
             string exMsg = $"Polling: StatusCode={authStatus.Status.Code}, Description={authStatus.Status.Description}, Details={string.Join(", ", (authStatus.Status.Details ?? new List<string>()))}'";
-            throw new Exception("Timeout Uwierzytelniania: Brak tokena po 2 minutach." + exMsg);
+            throw new Exception($"Brak tokena po 2 minutach. {exMsg}");
         }
         AuthenticationOperationStatusResponse accessTokenResponse = await _ksefClient.GetAccessTokenAsync(submissionResponse.AuthenticationToken.Token, cancellationToken);
 
@@ -163,11 +156,6 @@ public class AuthCoordinator : IAuthCoordinator
         {
             authStatus = await _ksefClient.GetAuthStatusAsync(authSubmission.ReferenceNumber, authSubmission.AuthenticationToken.Token, cancellationToken);
 
-            Console.WriteLine(
-                $"Polling: StatusCode={authStatus.Status.Code}, " +
-                $"Description='{authStatus.Status.Description}', " +
-                $"Elapsed={DateTime.UtcNow - startTime:mm\\:ss}");
-
             if (authStatus.Status.Code != 200 && !cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
@@ -179,8 +167,7 @@ public class AuthCoordinator : IAuthCoordinator
 
         if (authStatus.Status.Code != 200)
         {
-            Console.WriteLine("Timeout: Brak tokena po 2 minutach.");
-            throw new Exception("Timeout Uwierzytelniania: Brak tokena po 2 minutach.");
+            throw new Exception($"Timeout Uwierzytelniania: Brak tokena po 2 minutach. {authStatus.Status.Description}");
         }
         AuthenticationOperationStatusResponse accessTokenResponse = await _ksefClient.GetAccessTokenAsync(authSubmission.AuthenticationToken.Token, cancellationToken);
 

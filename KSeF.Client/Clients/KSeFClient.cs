@@ -5,7 +5,7 @@ using KSeF.Client.Core.Models.Peppol;
 using KSeF.Client.Core.Models.Permissions;
 using KSeF.Client.Core.Models.Permissions.Entity;
 using KSeF.Client.Core.Models.Permissions.EUEntity;
-using KSeF.Client.Core.Models.Permissions.EUEntityRepresentative;
+using KSeF.Client.Core.Models.Permissions.EuEntityRepresentative;
 using KSeF.Client.Core.Models.Permissions.IndirectEntity;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Core.Models.Sessions;
@@ -13,7 +13,6 @@ using KSeF.Client.Core.Models.Sessions.ActiveSessions;
 using KSeF.Client.Core.Models.Sessions.BatchSession;
 using KSeF.Client.Core.Models.Sessions.OnlineSession;
 using KSeF.Client.Core.Models;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.RegularExpressions;
 using KSeF.Client.Http;
@@ -24,6 +23,7 @@ using KSeF.Client.Core.Models.Permissions.SubUnit;
 
 namespace KSeF.Client.Clients;
 
+/// <inheritdoc />
 public class KSeFClient(IRestClient restClient) : IKSeFClient
 {
     private readonly IRestClient restClient = restClient;
@@ -174,7 +174,7 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
     }
 
     /// <inheritdoc />
-    public async Task<SendInvoiceResponse> SendOnlineSessionInvoiceAsync(SendInvoiceRequest requestPayload, string sessionReferenceNumber, string accessToken, CancellationToken cancellationToken)
+    public async Task<SendInvoiceResponse> SendOnlineSessionInvoiceAsync(SendInvoiceRequest requestPayload, string sessionReferenceNumber, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestPayload);
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionReferenceNumber);
@@ -189,7 +189,7 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
     }
 
     /// <inheritdoc />
-    public async Task CloseOnlineSessionAsync(string sessionReferenceNumber, string accessToken, CancellationToken cancellationToken)
+    public async Task CloseOnlineSessionAsync(string sessionReferenceNumber, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sessionReferenceNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
@@ -202,7 +202,7 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
     }
 
     /// <inheritdoc />
-    public async Task<OpenBatchSessionResponse> OpenBatchSessionAsync(OpenBatchSessionRequest requestPayload, string accessToken, CancellationToken cancellationToken)
+    public async Task<OpenBatchSessionResponse> OpenBatchSessionAsync(OpenBatchSessionRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestPayload);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
@@ -211,7 +211,7 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
     }
 
     /// <inheritdoc />
-    public async Task CloseBatchSessionAsync(string batchSessionReferenceNumber, string accessToken, CancellationToken cancellationToken)
+    public async Task CloseBatchSessionAsync(string batchSessionReferenceNumber, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(batchSessionReferenceNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
@@ -764,13 +764,13 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
 
     /// <inheritdoc />
     public async Task<OperationResponse> GrantsPermissionSubUnitAsync(
-        GrantPermissionsSubUnitRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
+        GrantPermissionsSubunitRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestPayload);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
 
         return await restClient.SendAsync<OperationResponse,
-            GrantPermissionsSubUnitRequest>(HttpMethod.Post,
+            GrantPermissionsSubunitRequest>(HttpMethod.Post,
                                                                                  "/api/v2/permissions/subunits/grants",
                                                                                  requestPayload,
                                                                                  accessToken,
@@ -780,24 +780,24 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
 
     /// <inheritdoc />
     public async Task<OperationResponse> GrantsPermissionEUEntityAsync(
-       GrantPermissionsEUEntityRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
+       GrantPermissionsEuEntityRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestPayload);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
 
-        return await restClient.SendAsync<OperationResponse, GrantPermissionsEUEntityRequest>(
+        return await restClient.SendAsync<OperationResponse, GrantPermissionsEuEntityRequest>(
             HttpMethod.Post, "/api/v2/permissions/eu-entities/administration/grants", requestPayload, accessToken, RestClient.DefaultContentType, cancellationToken
         ).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
     public async Task<OperationResponse> GrantsPermissionEUEntityRepresentativeAsync(
-        GrantPermissionsEUEntitRepresentativeRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
+        GrantPermissionsEuEntityRepresentativeRequest requestPayload, string accessToken, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requestPayload);
         ArgumentException.ThrowIfNullOrWhiteSpace(accessToken);
 
-        return await restClient.SendAsync<OperationResponse, GrantPermissionsEUEntitRepresentativeRequest>(
+        return await restClient.SendAsync<OperationResponse, GrantPermissionsEuEntityRepresentativeRequest>(
             HttpMethod.Post, "/api/v2/permissions/eu-entities/grants", requestPayload, accessToken, RestClient.DefaultContentType, cancellationToken
         ).ConfigureAwait(false);
     }
@@ -923,7 +923,7 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
     string accessToken,
     ICollection<AuthenticationKsefTokenStatus> statuses = null,
     string authorIdentifier = null,
-    Core.Models.Token.ContextIdentifierType? authorIdentifierType = null,
+    Core.Models.Token.TokenContextIdentifierType? authorIdentifierType = null,
     string description = null,
     string continuationToken = null,
     int? pageSize = 10,
@@ -1104,13 +1104,24 @@ public class KSeFClient(IRestClient restClient) : IKSeFClient
             cancellationToken
         ).ConfigureAwait(false);
     }
-
+    /// <inheritdoc />
+    public async Task<string> GetUpoAsync(Uri uri, CancellationToken cancellationToken = default)
+    {
+        return await restClient.SendAsync<string, object>(
+            method: HttpMethod.Get,
+            url: uri.ToString(),
+            requestBody: null,
+            token: null,
+            contentType: default,
+            cancellationToken: cancellationToken
+        ).ConfigureAwait(false);
+    }
 
     private async Task SendPackagePartsAsync<TInfo>(
         ICollection<PackagePartSignatureInitResponseType> parts,
         ICollection<TInfo> batchPartSendingInfos,
         Func<TInfo, HttpContent> contentFactory,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken = default)
         where TInfo : class
     {
         if (parts == null)

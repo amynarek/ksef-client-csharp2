@@ -357,11 +357,16 @@ public sealed class RestClient : IRestClient
                 string fullMessage = BuildErrorMessageFromDetails(apiErrorResponse);
                 throw new KsefApiException(fullMessage, responseMessage.StatusCode, apiErrorResponse?.Exception?.ServiceCode, apiErrorResponse);
             }
+            catch (KsefApiException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 throw new KsefApiException(
                     $"HTTP {(int)responseMessage.StatusCode}: {responseMessage.ReasonPhrase ?? "Unknown"}, AdditionalInfo: {ex.Message}",
-                    responseMessage.StatusCode);
+                    responseMessage.StatusCode,
+                    innerException: ex);
             }
         }
     }

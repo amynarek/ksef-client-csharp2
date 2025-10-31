@@ -37,7 +37,7 @@ public class AuthController : ControllerBase
     [HttpPost("auth-by-coordinator-with-PZ")]
     public async Task<ActionResult<AuthenticationOperationStatusResponse>> AuthWithPZAsync(string contextIdentifier, CancellationToken cancellationToken)
     {
-        // Inicjalizacja przykłdowego identyfikatora - w tym przypadku NIP.
+        // Inicjalizacja przykładowego identyfikatora - w tym przypadku NIP.
 
         return await _authCoordinator.AuthAsync(
                                                     AuthenticationTokenContextIdentifierType.Nip,
@@ -178,7 +178,7 @@ public class AuthController : ControllerBase
 
         if (authStatus.Status.Code != 200)
         {
-            string msg = $"Uwierzytelnienie nie powiodÂło się. Kod statusu: {authStatus?.Status.Code}, opis: {authStatus?.Status.Description}.";
+            string msg = $"Uwierzytelnienie nie powiodło się. Kod statusu: {authStatus?.Status.Code}, opis: {authStatus?.Status.Description}.";
 
             throw new Exception(msg);
         }

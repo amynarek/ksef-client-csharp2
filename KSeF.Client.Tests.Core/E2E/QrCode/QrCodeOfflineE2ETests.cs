@@ -43,7 +43,7 @@ public class QrCodeOfflineE2ETests : TestBase
         AuthenticationOperationStatusResponse authInfo = AuthenticationUtils.AuthenticateAsync(KsefClient, SignatureService, Fixture.Nip).GetAwaiter().GetResult();
         Fixture.AccessToken = authInfo.AccessToken.Token;
 
-        linkService = new VerificationLinkService(new KSeFClientOptions() { BaseUrl = KsefEnviromentsUris.TEST });
+        linkService = new VerificationLinkService(new KSeFClientOptions() { BaseUrl = KsefEnvironmentsUris.TEST });
         qrCodeService = new QrCodeService();
     }
 

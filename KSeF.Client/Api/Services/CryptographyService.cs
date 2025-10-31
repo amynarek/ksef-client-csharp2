@@ -10,7 +10,7 @@ namespace KSeF.Client.Api.Services;
 /// <inheritdoc />
 public class CryptographyService : ICryptographyService
 {
-    // JEDYNA zewnętrzna zależność: delegat do pobrania listy certów
+    // JEDYNA zewnętrzna zależność: delegat do pobrania listy certyfikatów
     private readonly Func<CancellationToken, Task<ICollection<PemCertificateInfo>>> _fetcher;
 
     private readonly TimeSpan _staleGrace = TimeSpan.FromHours(6);  // przy chwilowej awarii
@@ -42,9 +42,9 @@ public class CryptographyService : ICryptographyService
         ScheduleNextRefresh();  // ustaw timer
     }
 
-    public async Task ForceRefreshAsync(CancellationToken cancellationTokem = default)
+    public async Task ForceRefreshAsync(CancellationToken cancellationToken = default)
     {
-        await RefreshAsync(cancellationTokem);
+        await RefreshAsync(cancellationToken);
         ScheduleNextRefresh();
     }
     

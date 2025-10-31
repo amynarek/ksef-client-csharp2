@@ -1,5 +1,60 @@
 > Info: 🔧 zmienione • ➕ dodane • ➖ usunięte • 🔀 przeniesione
 
+## Changelog zmian – ## Wersja 2.0.0 RC5.5 
+
+### Nowe
+- **Permissions / Builder** — dodano `EntityAuthorizationsQueryRequestBuilder` z krokiem `ReceivedForOwnerNip(string ownerNip)` dla zapytań **Received** w kontekście **NIP właściciela**; opcjonalnie `WithPermissionTypes(IEnumerable<InvoicePermissionType>)`.
+- **E2E – AuthorizationPermissions** — dodano dwa scenariusz "Pobranie listy otrzymanych uprawnień podmiotowych jako właściciel w kontekście NIP":
+  - `...ReceivedOwnerNip_Direct_FullFlow_ShouldFindGrantedPermission`.
+  - `...ReceivedOwnerNip_Builder_FullFlow_ShouldFindGrantedPermission` (wariant z użyciem buildera).
+- E2E - Upo** - dodano test sprawdzający wszystkie dostępne metody pobierania UPO na przykładzie sesji online:
+  - `KSeF.Client.Tests.Core.E2E.OnlineSession.Upo.UpoRetrievalAsync_FullIntegrationFlow_AllStepsSucceed`.  
+- E2E: Pobranie listy **moich uprawnień** w bieżącym kontekście **NIP** (właściciel) – test `PersonPermissions_OwnerNip_MyPermissions_E2ETests`.
+- E2E: **Nadane uprawnienia** (właściciel, kontekst NIP) z filtrowaniem:
+  - po **PESEL** uprawnionego — `PersonPermissions_OwnerNip_Granted_FilterAuthorizedPesel_E2ETests`
+  - po **odcisku palca (fingerprint SHA-256)** uprawnionego — `PersonPermissions_OwnerNip_Granted_FilterAuthorizedFingerprint_E2ETests`
+- E2E „Nadane uprawnienia” (owner, kontekst NIP) z filtrowaniem po **NIP uprawnionego**  
+- **E2E – PersonalPermissions**: Pobranie listy **obowiązujących uprawnień** do pracy w KSeF jako **osoba uprawniona PESEL** w **kontekście NIP** — `PersonalPermissions_AuthorizedPesel_InNipContext_E2ETests`.
+- **NuGet Packages**: Opublikowano paczki NuGet oraz dodano instrukcję instalacji.
+- **KSeF.Client.Core** - dodano `EffectiveApiRateLimits` oraz `EffectiveApiRateLimitValues` dotyczące `/rate-limits`.
+- **LimitsClient** - dodano obsługę endpointu GET `/rate-limits`:
+  - `GetRateLimitsAsync(...)`
+- **TestDataClient** - dodano obsługę endpointów POST i DELETE `/testdata/rate-limits`:
+  - `SetRateLimitsAsync(...)`
+  - `RestoreRateLimitsAsync(...)`
+- **E2E - EnforcementOperations**
+  - `EnforcementOperationsE2ETests`
+  - `EnforcementOperationsNegativeE2ETests`
+    - Dodano testy E2E do nadawania uprawnień do wykonywania operacji komorniczych.
+  
+### Zmodyfikowane
+- `EntityAuthorizationsAuthorizingEntityIdentifier` pole `Type` zmieniono typ ze `string` na  enum `AuthorizedIdentifierType`.
+- `EntityAuthorizationsAuthorizedEntityIdentifier` pole `Type` zmieniono typ ze `string` na  enum  `AuthorizedIdentifier`.
+- **Tests / Utils - Upo** - przeniesiono metody pomocnicze do pobierania UPO z klas testów do KSeF.Client.Tests.Utils.Upo.UpoUtils:
+  - `...GetSessionInvoiceUpoAsync`,
+  - `...GetSessionUpoAsync`,
+  - `...GetUpoAsync`
+- `KSeF.Client.Tests.Core.E2E.OnlineSession.OnlineSessionE2ETests.OnlineSessionAsync_FullIntegrationFlow_AllStepsSucceed` uproszczono test stosując pobieranie UPO z adresu przekazanego w metadanych pobranej faktury, 
+- `KSeF.Client.Tests.Core.E2E.BatchSession.BatchSessionStreamE2ETests.BatchSession_StreamBased_FullIntegrationFlow_ReturnsUpo` uproszczono test stosując pobieranie UPO z adresu przekazanego w metadanych pobranej faktury, 
+- `KSeF.Client.Tests.Core.E2E.BatchSession.BatchSessionE2ETests.BatchSession_FullIntegrationFlow_ReturnsUpo` uproszczono test stosując pobieranie UPO z adresu przekazanego w metadanych pobranej faktury
+- **ServiceCollectionExtensions - AddCryptographyClient**
+- `KSeF.Client.DI.ServiceCollectionExtensions.AddCryptographyClient` zmodyfikowano metodę konfiguracyjną rejestrującą klienta oraz serwis (HostedService) kryptograficzny. Zrezygnowano z pobierania trybu startowego z opcji. Obecnie metoda AddCryptographyClient() przyjmuje 2 opcjonalne parametry: 
+  - delegat służący do pobrania publicznych certyfikatów KSeF (domyślnie jest to metoda GetPublicCertificatesAsync() w CryptographyClient)
+  - wartość z enum CryptographyServiceWarmupMode (domyślnie Blocking). Działanie każdego z trybów jest opisane w CryptographyServiceWarmupMode.cs
+Przykład użycia: `KSeF.DemoWebApp.Program.cs line 24`
+Przykład rejestracji serwisu i klienta kryptograficznego bez użycia hosta (z pominięciem AddCryptographyClient): `KSeF.Client.Tests.Core.E2E.TestBase.cs line 48-74`
+- `KSeF.Client.Core` - uporządkowano strukturę i doprecyzowano nazwy modeli oraz enumów. Modele potrzebne do manipulowania danymi testowymi obecnie znajdują się w folderze TestData (wcześniej Tests). Usunięto nieużywane klasy i enumy. 
+- `EntityAuthorizationsAuthorizingEntityIdentifier` pole `Type` zmieniono typ ze `string` na  enum `EntityAuthorizationsAuthorizingEntityIdentifierType`.
+- `EntityAuthorizationsAuthorizedEntityIdentifier` pole `Type` zmieniono typ ze `string` na  enum  `EntityAuthorizationsAuthorizedEntityIdentifierType`.
+- Poprawiono oznaczenia pól opcjonalnych w `SessionInvoice`.
+### Usunięte
+- **TestDataSessionLimitsBase**
+  - usunięto pola `MaxInvoiceSizeInMib` oraz `MaxInvoiceWithAttachmentSizeInMib`.
+
+### Uwaga / kompatybilność
+ - `KSeF.Client.Core` - zmiana nazw niektórych modeli, dopasowanie namespace do zmienionej struktury plików i katalogów. 
+ - `KSeF.Client.DI.ServiceCollectionExtensions.AddCryptographyClient` zmodyfikowano metodę konfiguracyjną rejestrującą klienta oraz serwis (HostedService) kryptograficzny.
+
 ---
 # Changelog zmian – ## Wersja 2.0.0 RC5.4.0
 ---
@@ -43,7 +98,7 @@
   - Porządek w MIME i nagłówkach – jednolite ustawianie `Content-Type`/`Accept`. 🔧
   - Aktualizacja podpisów interfejsów (wewnętrznych) pod nową strukturę REST. 🔧
 - **Routing / Spójność**
-  - Konsolidacja prefixów w jednym miejscu (RouteBuilder) zamiast powielania `"/api/v2"` w klientach/testach. 🔧
+  - Konsolidacja prefiksów w jednym miejscu (RouteBuilder) zamiast powielania `"/api/v2"` w klientach/testach. 🔧
 - **System codes / PEF**
   - Uzupełnione mapowania kodów systemowych i wersji pod **PEF** (serializacja/mapping). 🔧
 - **Testy / Utils**
@@ -104,7 +159,7 @@
   - Wyłączono serwis kryptograficzny z klienta KSeF 🔧
   - Wydzielono modele DTO do osobnego projektu `KSeF.Client.Core`, który jest zgodny z `NET Standard 2.0` ➕
 - **CertTestApp** ➕
-  - Doddano aplikację konsolową do zobrazowania tworzenia przykładowego, testowego certyfikatu oraz podpisu XAdES.
+  - Dodano aplikację konsolową do zobrazowania tworzenia przykładowego, testowego certyfikatu oraz podpisu XAdES.
 - **Klient kryptograficzny**
   - nowy klient  `CryptographyClient` ➕
 
@@ -258,7 +313,7 @@
    - Usunięto `InternalId` z wartości enum `TargetIdentifierType` w `GrantPermissionsIndirectEntityRequest`
    - Zmieniono odpowiedź z `SessionInvoicesResponse` na nową `SessionFailedInvoicesResponse` w odpowiedzi endpointu `/sessions/{referenceNumber}/invoices/failed`, metoda `GetSessionFailedInvoicesAsync`.
    - Zmieniono na opcjonalne pole `to` w `InvoiceMetadataQueryRequest`, `InvoiceQueryDateRange`, `InvoicesAsyncQueryRequest`.
-   - Zmieniono `AuthenticationOperationStatusResponse` na nową `AuthenticationListItem` w `AuthenticationListResponse` w odpowiedzi enpointu `/auth/sessions`.
+   - Zmieniono `AuthenticationOperationStatusResponse` na nową `AuthenticationListItem` w `AuthenticationListResponse` w odpowiedzi endpointu `/auth/sessions`.
    - Zmieniono model `InvoiceMetadataQueryRequest` adekwatnie do kontraktu API.
    - Dodano pole `CertificateType` w `SendCertificateEnrollmentRequest`, `CertificateResponse`, `CertificateMetadataListResponse` oraz `CertificateMetadataListRequest`.
    - Dodano `WithCertificateType` w `GetCertificateMetadataListRequestBuilder` oraz `SendCertificateEnrollmentRequestBuilder`.
@@ -282,19 +337,19 @@ Zmiana wersji .NET 8.0 na .NET 9/0
 
 ### 1.1 Api/Services
 - **AuthCoordinator.cs**: 🔧 Dodano dodatkowy log `Status.Details`; 🔧 dodano wyjątek przy `Status.Code == 400`; ➖ usunięto `ipAddressPolicy`
-- **CryptographyService.cs**: ➕ inicjalizacja certyfikatów; ➕ pola `symetricKeyEncryptionPem`, `ksefTokenPem`
+- **CryptographyService.cs**: ➕ inicjalizacja certyfikatów; ➕ pola `symmetricKeyEncryptionPem`, `ksefTokenPem`
 - **SignatureService.cs**: 🔧 `Sign(...)` → `SignAsync(...)`
 - **QrCodeService.cs**: ➕ nowa usługa do generowania QrCodes
 - **VerificationLinkService.cs**: ➕ nowa usługa generowania linków do weryfikacji faktury
 
 ### 1.2 Api/Builders
 - **SendCertificateEnrollmentRequestBuilder.cs**: 🔧 `ValidFrom` pole zmienione na opcjonalne ; ➖ interfejs `WithValidFrom`
-- **OpenBatchSessionRequestBuilder.cs**: 🔧 `WithBatchFile(...)` usunięto parametr `offlineMode`; ➕ `WithOfflineMode(bool)` nopwy opcjonalny krok do oznaczenia trybu offline
+- **OpenBatchSessionRequestBuilder.cs**: 🔧 `WithBatchFile(...)` usunięto parametr `offlineMode`; ➕ `WithOfflineMode(bool)` nowy opcjonalny krok do oznaczenia trybu offline
 
 ### 1.3 Core/Models
 - **StatusInfo.cs**: 🔧 dodano property `Details`; ➖ `BasicStatusInfo` - usunięto klase w c elu unifikacji statusów
 - **PemCertificateInfo.cs**: ➕ `PublicKeyPem` - dodano nowe property
-- **DateType.cs**: ➕ `Invoicing`, `Acquisition`, `Hidden` - dodano nowe emumeratory do filtrowania faktur
+- **DateType.cs**: ➕ `Invoicing`, `Acquisition`, `Hidden` - dodano nowe enumeratory do filtrowania faktur
 - **PersonPermission.cs**: 🔧 `PermissionScope` zmieniono z PermissionType zgodnie ze zmianą w kontrakcie
 - **PersonPermissionsQueryRequest.cs**: 🔧 `QueryType` - dodano nowe wymagane property do filtrowania w zadanym kontekście
 - **SessionInvoice.cs**: 🔧 `InvoiceFileName` - dodano nowe property 
@@ -387,7 +442,7 @@ Wybrane: **Authorization.cs**, `EntityPermission*.cs`, **OnlineSession.cs**, **T
     public DateTimeOffset PermanentStorageDate { get; set; }
   ```
 - **InvoiceMetadataQueryRequest.cs**  
-  🔧 w `Seller` oraz `Buyer` odano nowe typy bez pola `Name`:
+  🔧 w `Seller` oraz `Buyer` dodano nowe typy bez pola `Name`:
 
 #### 1.3 Core/Interfaces
 
@@ -471,7 +526,7 @@ po
 
 - **PemCertificateInfo.cs**: ➖ Usunięto właściwości PublicKeyPem; 
 
-- **ServiceCollectionExtensions.cs**: ➕ konfiguracjia lokalizacji (`pl-PL`, `en-US`) i rejestracji `IQrCodeService`/`IVerificationLinkService`
+- **ServiceCollectionExtensions.cs**: ➕ konfiguracja lokalizacji (`pl-PL`, `en-US`) i rejestracji `IQrCodeService`/`IVerificationLinkService`
 - **AuthTokenRequest.cs**: dostosowanie serializacji XML do nowego schematu XSD
 - **README.md**: poprawione środowisko w przykładzie rejestracji KSeFClient w kontenerze DI.
 ---
@@ -485,7 +540,7 @@ po
 ### 2. KSeF.Client.Tests
 
 * **Utils**
-  ➕ Nowe utils usprawniające autentykację, obsługę sesji interaktywnych, wsadowych oraz zarządzanie uprawnieniami oraz ich metody wspólne: **AuthenticationUtils.cs**, **OnlineSessionUtils.cs**, **MiscellaneousUtils.cs**, **BatchSessionUtils.cs**, **PermissionsUttils.cs**.
+  ➕ Nowe utils usprawniające uwierzytelnianie, obsługę sesji interaktywnych, wsadowych, zarządzanie uprawnieniami, oraz ich metody wspólne: **AuthenticationUtils.cs**, **OnlineSessionUtils.cs**, **MiscellaneousUtils.cs**, **BatchSessionUtils.cs**, **PermissionsUtils.cs**.
   🔧 Refactor testów - użycie nowych klas utils.
   🔧 Zmiana kodu statusu dla zamknięcia sesji interaktywnej z 300 na 170.
   🔧 Zmiana kodu statusu dla zamknięcia sesji wsadowej z 300 na 150.

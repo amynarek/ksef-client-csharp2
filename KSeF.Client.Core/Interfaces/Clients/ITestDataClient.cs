@@ -1,4 +1,5 @@
-﻿using KSeF.Client.Core.Models.Tests;
+﻿using KSeF.Client.Core.Models.RateLimits;
+using KSeF.Client.Core.Models.TestData;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -44,5 +45,11 @@ namespace KSeF.Client.Core.Interfaces.Clients
         
         /// <summary> POST /api/v2/testdata/limits/context/session — zmiana limitów sesji dla bieżącego kontekstu (tylko na środowiskach testowych).</summary>
         Task RestoreDefaultCertificatesLimitInCurrentSubjectAsync(string accessToken, CancellationToken cancellationToken = default);
+
+        /// <summary>POST /api/v2/testdata/rate-limits — zmienia wartości aktualnie obowiązujących limitów żądań przesyłanych do API dla bieżącego kontekstu. Tylko na środowisku testowym.</summary>
+        Task SetRateLimitsAsync(EffectiveApiRateLimitsRequest requestPayload, string accessToken, CancellationToken cancellationToken = default);
+
+        /// <summary>DELETE /api/v2/testdata/rate-limits — przywraca wartości aktualnie obowiązujących limitów żądań przesyłanych do API dla bieżącego kontekstu do wartości domyślnych. Tylko na środowiskach testowych.</summary>
+        Task RestoreRateLimitsAsync(string accessToken, CancellationToken cancellationToken = default);
     }
 }

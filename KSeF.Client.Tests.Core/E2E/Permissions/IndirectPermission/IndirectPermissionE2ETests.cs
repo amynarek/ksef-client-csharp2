@@ -2,6 +2,7 @@ using KSeF.Client.Api.Builders.IndirectEntityPermissions;
 using KSeF.Client.Api.Builders.PersonPermissions;
 using KSeF.Client.Core.Models;
 using KSeF.Client.Core.Models.Permissions;
+using KSeF.Client.Core.Models.Permissions.Identifiers;
 using KSeF.Client.Core.Models.Permissions.IndirectEntity;
 using KSeF.Client.Core.Models.Permissions.Person;
 using KSeF.Client.Tests.Utils;
@@ -134,13 +135,13 @@ public class IndirectPermissionE2ETests : TestBase
         GrantPermissionsPersonRequest request = GrantPersonPermissionsRequestBuilder
             .Create()
             .WithSubject(
-                new PersonSubjectIdentifier
+                new GrantPermissionsPersonSubjectIdentifier
                 {
-                    Type = PersonSubjectIdentifierType.Nip,
+                    Type = GrantPermissionsPersonSubjectIdentifierType.Nip,
                     Value = delegateNip
                 }
             )
-            .WithPermissions(PersonStandardPermissionType.CredentialsManage)
+            .WithPermissions(PersonPermissionType.CredentialsManage)
             .WithDescription("E2E test - nadanie uprawnień CredentialsManage do zarządzania uprawnieniami")
             .Build();
 

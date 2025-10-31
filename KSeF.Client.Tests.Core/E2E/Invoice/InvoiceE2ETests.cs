@@ -40,7 +40,7 @@ public class InvoiceE2ETests : TestBase
         // Arrange
         InvoiceQueryFilters invoiceMetadataQueryRequest = new InvoiceQueryFilters
         {
-            SubjectType = SubjectType.Subject1,
+            SubjectType = InvoiceSubjectType.Subject1,
             DateRange = new DateRange
             {
                 From = DateTime.UtcNow.AddDays(-DateRangeDays),
@@ -62,8 +62,8 @@ public class InvoiceE2ETests : TestBase
     }
 
     [Theory]
-    [InlineData(SystemCodeEnum.FA3, "invoice-template-fa-3.xml")]
-    public async Task Invoice_GetInvoiceAsync_ReturnsInvoiceXml(SystemCodeEnum systemCode, string invoiceTemplatePath)
+    [InlineData(SystemCode.FA3, "invoice-template-fa-3.xml")]
+    public async Task Invoice_GetInvoiceAsync_ReturnsInvoiceXml(SystemCode systemCode, string invoiceTemplatePath)
     {
         // Arrange
         EncryptionData encryptionData = CryptographyService.GetEncryptionData();
@@ -145,7 +145,7 @@ public class InvoiceE2ETests : TestBase
                 To = DateTime.Now.AddDays(1),
                 DateType = DateType.Invoicing
             },
-            SubjectType = SubjectType.Subject1
+            SubjectType = InvoiceSubjectType.Subject1
         };
 
         // 9. Pobierz metadane faktury
@@ -174,7 +174,7 @@ public class InvoiceE2ETests : TestBase
                 CancellationToken),
             result => result?.Status?.Code == SuccessStatusCode,
             delay: TimeSpan.FromMilliseconds(SleepTime),
-            maxAttempts: MaxRetries,
+            maxAttempts: MaxRetries * 10,
             cancellationToken: CancellationToken);
 
         Assert.NotNull(exportStatus);
